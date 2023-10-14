@@ -1,5 +1,6 @@
 package br.com.gustavobs.todolist.task;
 
+import br.com.gustavobs.todolist.utils.Utils;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cglib.core.Local;
@@ -39,5 +40,12 @@ public class TaskController {
         var idUser = request.getAttribute("idUser");
         var tasks = this.taskRepository.findAllByIdUser((UUID) idUser);
         return tasks;
+    }
+
+    @PutMapping("/{id}")
+    public TaskModel update(@RequestBody TaskModel taskModel, HttpServletRequest request, @PathVariable UUID id){
+        var task = this.taskRepository.findById(id).orElse(null);
+        Utils.copyNonNullProperties(taskModel, task);
+        return this.taskRepository.save(task);
     }
 }
